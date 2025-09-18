@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract TestERC721 is ERC721URIStorage, Ownable {
+contract TheMojis is ERC721URIStorage, Ownable {
     uint256 public tokenIds = 0;
     uint256 public mintPrice = (5 ether);
     uint256 public supply = 4291;

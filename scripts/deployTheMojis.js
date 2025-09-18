@@ -1,5 +1,5 @@
 const quais = require('quais')
-const TestNFT = require('../artifacts/contracts/TestERC721.sol/TestERC721.json')
+const TheMojis = require('../artifacts/contracts/TheMojis.sol/TheMojis.json')
 const { deployMetadata } = require("hardhat")
 require('dotenv').config()
 
@@ -9,12 +9,12 @@ const tokenArgs = [process.env.INITIAL_OWNER]
 async function deployERC721() {
 
   // Get IPFS Hash
-  const ipfsHash = await deployMetadata.pushMetadataToIPFS("TestERC721")
+  const ipfsHash = await deployMetadata.pushMetadataToIPFS("TheMojis")
 
   // Config provider, wallet, and contract factory
   const provider = new quais.JsonRpcProvider(hre.network.config.url, undefined, { usePathing: true })
   const wallet = new quais.Wallet(hre.network.config.accounts[0], provider)
-  const ERC721 = new quais.ContractFactory(TestNFT.abi, TestNFT.bytecode, wallet, ipfsHash)
+  const ERC721 = new quais.ContractFactory(TheMojis.abi, TheMojis.bytecode, wallet, ipfsHash)
 
   // Broadcast deploy transaction
   const erc721 = await ERC721.deploy(...tokenArgs)

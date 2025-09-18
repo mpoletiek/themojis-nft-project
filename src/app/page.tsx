@@ -6,7 +6,7 @@ import { useContext } from 'react';
 import { Toaster, toaster } from "@/components/ui/toaster"
 import { buildTransactionUrl, shortenAddress, sortedQuaiShardNames } from '@/utils/quaisUtils';
 import { quais } from 'quais';
-import TestNFT from '../../artifacts/contracts/TestERC721.sol/TestERC721.json';
+import TheMojis from '../../artifacts/contracts/TheMojis.sol/TheMojis.json';
 import { StateContext } from '@/app/store';
 import ConnectButton from '@/components/ui/connectButton';
 import { useGetAccounts } from '@/utils/wallet';
@@ -41,7 +41,7 @@ export default function Mint() {
 
   const callContract = useCallback(async (type: string) => {
 	if(type == 'balanceOf') {
-  	const ERC721contract = new quais.Contract(contractAddress, TestNFT.abi, await web3Provider.getSigner());
+  	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
   	const balance = await ERC721contract.balanceOf(account?.addr);
   	if(balance){
     	console.log("Balance: "+balance);
@@ -50,7 +50,7 @@ export default function Mint() {
   	return balance;
 	}
 	else if(type == 'symbol'){
-  	const ERC721contract = new quais.Contract(contractAddress, TestNFT.abi, await web3Provider.getSigner());
+  	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
   	const contractSymbol = await ERC721contract.symbol();
   	if(contractSymbol){
     	setSymbol(contractSymbol);
@@ -58,7 +58,7 @@ export default function Mint() {
   	return contractSymbol;
 	}
 	else if(type == 'name'){
-  	const ERC721contract = new quais.Contract(contractAddress, TestNFT.abi, await web3Provider.getSigner());
+  	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
   	const contractName = await ERC721contract.name();
   	if(contractName){
     	setNFTName(contractName);
@@ -66,7 +66,7 @@ export default function Mint() {
   	return contractName;
 	}
 	else if(type == 'owner'){
-  	const ERC721contract = new quais.Contract(contractAddress, TestNFT.abi, await web3Provider.getSigner());
+  	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
   	const contractOwner = await ERC721contract.owner();
   	if(account?.addr == contractOwner){
     	setIsOwner(true);
@@ -74,7 +74,7 @@ export default function Mint() {
   	return contractOwner;
 	}
 	else if(type == 'mintPrice'){
-  	const ERC721contract = new quais.Contract(contractAddress, TestNFT.abi, await web3Provider.getSigner());
+  	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
   	const price = await ERC721contract.mintPrice();
   	if(price){
     	console.log('mintPrice: '+(price/BigInt(1000000000000000000)));
@@ -83,7 +83,7 @@ export default function Mint() {
   	return price;
 	}
 	else if(type == 'tokenid'){
-  	const ERC721contract = new quais.Contract(contractAddress, TestNFT.abi, await web3Provider.getSigner());
+  	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
   	const tokenid = await ERC721contract.tokenIds();
   	if(tokenid >= 0){
     	console.log("tokenid: "+tokenid);
@@ -91,7 +91,7 @@ export default function Mint() {
   	}
 	}
 	else if(type == 'supply'){
-  	const ERC721contract = new quais.Contract(contractAddress, TestNFT.abi, await web3Provider.getSigner());
+  	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
   	const supply = await ERC721contract.supply();
   	if(supply){
     	console.log("supply: "+supply);
@@ -101,7 +101,7 @@ export default function Mint() {
 	}
 	else if(type == 'mint'){
   	try {
-    	const ERC721contract = new quais.Contract(contractAddress, TestNFT.abi, await web3Provider.getSigner());
+    	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
     	const price = await ERC721contract.mintPrice();
     	const contractTransaction = await ERC721contract.mint(account?.addr,{value: price});
     	const txReceipt = await contractTransaction.wait();
@@ -112,7 +112,7 @@ export default function Mint() {
 	}
 	else if(type == 'withdraw'){
   	try {
-    	const ERC721contract = new quais.Contract(contractAddress, TestNFT.abi, await web3Provider.getSigner());
+    	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
     	const contractTransaction = await ERC721contract.withdraw();
     	const txReceipt = await contractTransaction.wait();
     	console.log(txReceipt);
@@ -122,7 +122,7 @@ export default function Mint() {
   	}
 	}
 	else if(type=='baseTokenURI'){
-  	const ERC721contract = new quais.Contract(contractAddress, TestNFT.abi, await web3Provider.getSigner());
+  	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
   	const uri = await ERC721contract.baseTokenURI();
   	if(uri){
     	setBaseTokenURI(uri);
@@ -131,7 +131,7 @@ export default function Mint() {
 	}
 	else if(type=='tokenURI'){
   	try {
-    	const ERC721contract = new quais.Contract(contractAddress, TestNFT.abi, await web3Provider.getSigner());
+    	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
     	if(tokenIdInput.trim() !== ''){
       	const tokenId = parseInt(tokenIdInput);
       	console.log("Fetching Token URI for ID: "+tokenId);
@@ -144,7 +144,7 @@ export default function Mint() {
   	}
 	}
 	else if(type=='maxMintPerAddress'){
-  	const ERC721contract = new quais.Contract(contractAddress, TestNFT.abi, await web3Provider.getSigner());
+  	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
   	const maxMint = await ERC721contract.maxMintPerAddress();
   	if(maxMint){
     	setMaxMintPerAddress(Number(maxMint));

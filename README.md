@@ -145,9 +145,9 @@ The `TestERC721` contract includes:
 ### Network Configuration
 
 The dApp is configured for the Quai Network Cyprus-1 testnet:
-- **RPC URL**: `https://orchard.rpc.quai.network`
+- **RPC URL**: `https://rpc.quai.network`
 - **Chain ID**: `15000`
-- **Explorer**: `https://orchard.quaiscan.io`
+- **Explorer**: `https://quaiscan.io`
 
 ## Development
 

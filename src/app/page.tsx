@@ -399,7 +399,7 @@ export default function Mint() {
             	<p className="text-lg text-gray-300">
               	<span className="text-gray-400">Symbol:</span>{' '}
               	<a 
-                	href={`https://orchard.quaiscan.io/token/${contractAddress}`} 
+                	href={`https://quaiscan.io/token/${contractAddress}`} 
                 	target="_blank" 
                 	rel="noopener noreferrer"
                 	className="text-blue-400 hover:text-blue-300 transition-colors font-semibold"

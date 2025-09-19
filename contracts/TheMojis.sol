@@ -1,7 +1,10 @@
-// Quai NFT Example //
-/////////////////////
-// Anyone can mint.
-// Max supply and mint price are public, modifiable by the owner.
+// The Mojis NFT Contract //
+///////////////////////////
+// Pausable minting with whitelist functionality.
+// When paused: Only whitelisted addresses can mint.
+// When unpaused: Anyone can mint (up to max per address).
+// Owner can pause/unpause and manage whitelist.
+// Max supply and mint limits are modifiable by the owner.
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
@@ -11,26 +14,56 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 contract TheMojis is ERC721URIStorage, Ownable {
     uint256 public tokenIds = 0;
-    uint256 public mintPrice = (5 ether);
     uint256 public supply = 4291;
     string public baseTokenURI = "ipfs://QmZdegfWQ1pR4MEyQff7xnV1J47aLUDAhpR5GjsxrdWtFn/";
     uint256 public maxMintPerAddress = 5;
+    bool public paused = true;
+
+    mapping(address => bool) public whitelist;
+
+    
+    // Events
+    event Paused(address account);
+    event Unpaused(address account);
     
     constructor(address initialOwner) Ownable(initialOwner) ERC721("The Mojis", "TMJ") { }
+
+    // Pause minting
+    function pause() public onlyOwner {
+        require(!paused, "Minting is already paused");
+        paused = true;
+        emit Paused(msg.sender);
+    }
+
+    // Unpause minting
+    function unpause() public onlyOwner {
+        require(paused, "Minting is not paused");
+        paused = false;
+        emit Unpaused(msg.sender);
+    }
 
     // Mint NFT 
     function mint(address _recipient)
         public 
-        payable
         returns (uint256)
     {
-        require(msg.value == mintPrice, "Not enough QUAI to mint");
-        require(balanceOf(_recipient) < maxMintPerAddress, "You can only mint 2 NFTs.");
-        uint256 tokenId = tokenIds;
-        require(tokenId < supply, "No more NFTs");
-        _mint(_recipient, tokenId);
-        tokenIds += 1;
-        return tokenId;
+        require(balanceOf(_recipient) < maxMintPerAddress, "Max mint per address reached.");
+
+        if(paused) {
+            require(whitelist[_recipient], "You are not whitelisted.");
+            uint256 wlTokenId = tokenIds;
+            require(wlTokenId < supply, "No more NFTs");
+            _mint(_recipient, wlTokenId);
+            tokenIds += 1;
+            return wlTokenId;    
+        }
+        else{
+            uint256 tokenId = tokenIds;
+            require(tokenId < supply, "No more NFTs");
+            _mint(_recipient, tokenId);
+            tokenIds += 1;
+            return tokenId;
+        }
     }
 
     // Burn NFT
@@ -51,16 +84,6 @@ contract TheMojis is ERC721URIStorage, Ownable {
         return supply;
     }
 
-    // Update Mint Price
-    function updateMintPrice(uint256 _price)
-        public
-        onlyOwner()
-        returns (uint256)
-    {
-        mintPrice = _price;
-        return mintPrice;
-    }
-
     // Update Max Mint Per Address
     function updateMaxMintPerAddress(uint256 _maxMintPerAddress)
         public
@@ -79,6 +102,14 @@ contract TheMojis is ERC721URIStorage, Ownable {
     {
         baseTokenURI = _baseTokenURI;
         return baseTokenURI;
+    }
+
+    function addToWhitelist(address _user) public onlyOwner {
+        whitelist[_user] = true;
+    }
+
+    function removeFromWhitelist(address _user) public onlyOwner {
+        whitelist[_user] = false;
     }
 
     // Override tokenURI to return baseURI + tokenId
@@ -116,19 +147,6 @@ contract TheMojis is ERC721URIStorage, Ownable {
             value /= 10;
         }
         return string(buffer);
-    }
-    
-    // Withdraw QUAI to Owner
-    function withdraw()
-        public 
-        payable
-        onlyOwner()
-        returns (bool)
-    {
-        require(msg.sender == owner(), "Unauthorized");
-        (bool success, ) = owner().call{value:address(this).balance}("");
-        require(success, "Withdraw failed.");
-        return true;
     }
 
 }

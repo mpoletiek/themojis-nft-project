@@ -23,21 +23,25 @@ export default function Mint() {
   const [retrievedTokenURI, setRetrievedTokenURI] = useState('');
   const [maxMintPerAddress, setMaxMintPerAddress] = useState(0);
   const [nftBalance, setNFTBalance] = useState(0);
-  const [mintPrice, setMintPrice] = useState(BigInt(0));
   const [tokenSupply, setTokenSupply] = useState(null);
   const [remainingSupply, setRemainingSupply] = useState(0);
-  const [contractBalance, setContractBalance] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isWhitelisted, setIsWhitelisted] = useState(false);
   const { web3Provider, account } = useContext(StateContext);
+
+  // Emoji list for display
+  const emojis = [
+    '1F603.png', '1F604.png', '1F605.png', '1F608.png', '1F60B.png', '1F60D.png', '1F60E.png',
+    '1F616.png', '1F618.png', '1F61A.png', '1F61D.png', '1F623.png', '1F624.png', '1F629.png',
+    '1F62C.png', '1F62E.png', '1F631.png', '1F633.png', '1F680.png', '1F681.png', '1F697.png',
+    '1F6A2.png', '1F923.png', '1F924.png', '1F928.png', '1F929.png', '1F92D.png', '1F92F.png',
+    '1F970.png', '1F973.png', '1F974.png', '1F975.png', '1F976.png', '1F9CC.png', '1F9D0.png',
+    '1F9D9-1F3FB.png', '1F9FD.png', '1FA77.png', '1FABE.png', '1FADF.png', '1FAE0.png', '1FAE1.png',
+    '1F47A.png', '1F47B.png', '1F47D.png', '1F383.png', '1F386.png', '1F3A8.png', '1F404.png',
+    '1F431.png', '1F436.png', '1F469-200D-1F9BD.png', '1F9CE-200D-27A1-FE0F.png', '2648.png'
+  ];
   const contractAddress = process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT as string; // Change this to your contract address
 
-  const getContractBalance = useCallback(async () => {
-	const resp = await fetch('https://orchard.quaiscan.io/api/v2/addresses/'+contractAddress);
-	const ret = await resp.json();
-	if(ret.coin_balance){
-  	setContractBalance(Number(ret.coin_balance)/Number(1000000000000000000));
-  	console.log("Contract Balance: "+contractBalance);
-	}
-  }, [contractAddress, contractBalance])
 
   const callContract = useCallback(async (type: string) => {
 	if(type == 'balanceOf') {
@@ -73,15 +77,6 @@ export default function Mint() {
   	}
   	return contractOwner;
 	}
-	else if(type == 'mintPrice'){
-  	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
-  	const price = await ERC721contract.mintPrice();
-  	if(price){
-    	console.log('mintPrice: '+(price/BigInt(1000000000000000000)));
-    	setMintPrice(price/BigInt(1000000000000000000));
-  	}
-  	return price;
-	}
 	else if(type == 'tokenid'){
   	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
   	const tokenid = await ERC721contract.tokenIds();
@@ -102,21 +97,9 @@ export default function Mint() {
 	else if(type == 'mint'){
   	try {
     	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
-    	const price = await ERC721contract.mintPrice();
-    	const contractTransaction = await ERC721contract.mint(account?.addr,{value: price});
+    	const contractTransaction = await ERC721contract.mint(account?.addr);
     	const txReceipt = await contractTransaction.wait();
     	return Promise.resolve({ result: txReceipt, method: "Mint" });
-  	} catch (err) {
-    	return Promise.reject(err);
-  	}
-	}
-	else if(type == 'withdraw'){
-  	try {
-    	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
-    	const contractTransaction = await ERC721contract.withdraw();
-    	const txReceipt = await contractTransaction.wait();
-    	console.log(txReceipt);
-    	return Promise.resolve({ result: txReceipt, method: "Withdraw" });
   	} catch (err) {
     	return Promise.reject(err);
   	}
@@ -150,6 +133,18 @@ export default function Mint() {
     	setMaxMintPerAddress(Number(maxMint));
   	}
   	return maxMint;
+	}
+	else if(type == 'paused'){
+  	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
+  	const pausedStatus = await ERC721contract.paused();
+  	setIsPaused(pausedStatus);
+  	return pausedStatus;
+	}
+	else if(type == 'whitelist'){
+  	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
+  	const whitelistStatus = await ERC721contract.whitelist(account?.addr);
+  	setIsWhitelisted(whitelistStatus);
+  	return whitelistStatus;
 	}
   }, [contractAddress, web3Provider, account, tokenIdInput]);
 
@@ -243,23 +238,48 @@ export default function Mint() {
   	callContract('owner');
   	callContract('tokenid');
   	callContract('supply');
-  	callContract('mintPrice');
   	callContract('balanceOf');
   	callContract('symbol');
   	callContract('name');
   	callContract('baseTokenURI');
   	callContract('maxMintPerAddress');
-  	getContractBalance();
+  	callContract('paused');
+  	callContract('whitelist');
 	}
 	if((Number(tokenId) >= 0) && (Number(tokenSupply) >= 0)){
   	if(tokenId == 0){
-    	setRemainingSupply(Number(tokenSupply));
+    	setRemainingSupply(Number(tokenSupply)+1);
   	} else {
-    	setRemainingSupply(Number(tokenSupply) - Number(tokenId));
+    	setRemainingSupply((Number(tokenSupply) - Number(tokenId)) + 1);
   	}
   	console.log("Remaining Supply: "+remainingSupply);
 	}
-  }, [account, tokenId, tokenSupply, callContract, getContractBalance, remainingSupply]);
+  }, [account, tokenId, tokenSupply, callContract, remainingSupply]);
+
+  // Check if user can mint based on pause and whitelist status
+  const canMint = () => {
+    if (!account) return false;
+    if (remainingSupply <= 0) return false;
+    if (maxMintPerAddress > 0 && nftBalance >= maxMintPerAddress) return false;
+    
+    // If paused, user must be whitelisted
+    if (isPaused) {
+      return isWhitelisted;
+    }
+    
+    // If not paused, anyone can mint
+    return true;
+  };
+
+  // Get mint status message
+  const getMintStatusMessage = () => {
+    if (!account) return "Connect your wallet to start minting";
+    if (remainingSupply <= 0) return "Collection sold out";
+    if (maxMintPerAddress > 0 && nftBalance >= maxMintPerAddress) return "Maximum mint limit reached";
+    if (isPaused && !isWhitelisted) return "Minting is paused - Whitelist only";
+    if (isPaused && isWhitelisted) return "Minting is paused - You are whitelisted";
+    return "Ready to mint";
+  };
 
   return (
 	<>
@@ -297,6 +317,15 @@ export default function Mint() {
               	Mint, trade, and discover unique digital collectibles on the fastest blockchain network
             	</p>
             	
+            	{/* Emoji Preview */}
+            	<div className="flex justify-center items-center space-x-4 mb-6 animate-fade-in-up">
+              	<img src="/mojis/1F603.png" alt="Happy" className="w-12 h-12 object-contain hover:scale-110 transition-transform duration-300" />
+              	<img src="/mojis/1F60D.png" alt="Heart Eyes" className="w-12 h-12 object-contain hover:scale-110 transition-transform duration-300" />
+              	<img src="/mojis/1F680.png" alt="Rocket" className="w-12 h-12 object-contain hover:scale-110 transition-transform duration-300" />
+              	<img src="/mojis/1F47A.png" alt="Alien" className="w-12 h-12 object-contain hover:scale-110 transition-transform duration-300" />
+              	<img src="/mojis/1F383.png" alt="Halloween" className="w-12 h-12 object-contain hover:scale-110 transition-transform duration-300" />
+            	</div>
+            	
             	{/* Connection Status */}
             	<div className="animate-fade-in-up">
               	{account ? (
@@ -325,6 +354,32 @@ export default function Mint() {
         	</div>
       	</div>
 
+      	{/* Scrolling Emoji Bar */}
+      	<div className="w-full mb-12 overflow-hidden">
+        	<div className="flex animate-scroll">
+          	{/* First set of emojis */}
+          	{emojis.map((emoji, index) => (
+            	<div key={`first-${index}`} className="flex-shrink-0 mx-2">
+              		<img 
+                		src={`/mojis/${emoji}`} 
+                		alt={`Emoji ${index + 1}`}
+                		className="w-16 h-16 object-contain hover:scale-110 transition-transform duration-300"
+              		/>
+            	</div>
+          	))}
+          	{/* Duplicate set for seamless loop */}
+          	{emojis.map((emoji, index) => (
+            	<div key={`second-${index}`} className="flex-shrink-0 mx-2">
+              		<img 
+                		src={`/mojis/${emoji}`} 
+                		alt={`Emoji ${index + 1}`}
+                		className="w-16 h-16 object-contain hover:scale-110 transition-transform duration-300"
+              		/>
+            	</div>
+          	))}
+        	</div>
+      	</div>
+
       	{/* Collection Overview Section */}
       	<div className="max-w-6xl mx-auto px-6 mb-12">
         	<div className="glass-card rounded-2xl p-8 animate-fade-in-up">
@@ -349,24 +404,12 @@ export default function Mint() {
           	</div>
 
           	{/* Stats Grid */}
-          	<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          	<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             	<div className="text-center p-4 bg-white/5 rounded-xl border border-white/10 hover:border-red-500/30 transition-all duration-300">
               	<div className="text-2xl font-bold text-white mb-1">
                 	{Number(tokenSupply) > 0 ? Number(tokenSupply).toLocaleString() : '0'}
               	</div>
               	<div className="text-gray-400 font-medium text-sm">Total Supply</div>
-            	</div>
-            	<div className="text-center p-4 bg-white/5 rounded-xl border border-white/10 hover:border-red-500/30 transition-all duration-300">
-              	<div className="text-2xl font-bold text-white mb-1">
-                	{mintPrice ? `${mintPrice.toLocaleString()}` : '0'}
-              	</div>
-              	<div className="text-gray-400 font-medium text-sm">Mint Price (QUAI)</div>
-            	</div>
-            	<div className="text-center p-4 bg-white/5 rounded-xl border border-white/10 hover:border-red-500/30 transition-all duration-300">
-              	<div className="text-2xl font-bold text-white mb-1">
-                	{contractBalance.toLocaleString()}
-              	</div>
-              	<div className="text-gray-400 font-medium text-sm">Contract Balance (QUAI)</div>
             	</div>
             	<div className="text-center p-4 bg-white/5 rounded-xl border border-white/10 hover:border-red-500/30 transition-all duration-300">
               	<div className="text-2xl font-bold text-white mb-1">
@@ -390,6 +433,37 @@ export default function Mint() {
               	</a>
             	</div>
           	)}
+        	</div>
+      	</div>
+
+      	{/* Emoji Collection Preview */}
+      	<div className="max-w-6xl mx-auto px-6 mb-12">
+        	<div className="glass-card rounded-2xl p-8 animate-fade-in-up">
+          	<div className="text-center mb-8">
+            	<div className="inline-flex items-center px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full mb-4">
+              		<span className="text-purple-400 font-semibold text-sm">🎨 Collection Preview</span>
+            	</div>
+            	<h2 className="text-3xl font-bold gradient-text mb-3">What You'll Mint</h2>
+            	<p className="text-lg text-gray-300">Discover the amazing emoji collection available for minting</p>
+          	</div>
+          	
+          	{/* Emoji Grid */}
+          	<div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-4">
+            	{emojis.slice(0, 24).map((emoji, index) => (
+              		<div key={index} className="group relative">
+                		<img 
+                  			src={`/mojis/${emoji}`} 
+                  			alt={`Emoji ${index + 1}`}
+                  			className="w-full h-16 object-contain group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                		/>
+                		<div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
+                  			<span className="text-white text-xs font-semibold"></span>
+                		</div>
+              		</div>
+            	))}
+          	</div>
+          	
+          	
         	</div>
       	</div>
 
@@ -476,22 +550,47 @@ export default function Mint() {
               	</div>
               	<h3 className="text-2xl font-bold text-white mb-3">Mint Your NFT</h3>
               	<p className="text-gray-400 text-base">Get your unique digital collectible</p>
+              	
+              	
             	</div>
 
             	{account ? (
               	<div className="space-y-6">
+                	{/* Status Display */}
+                	<div className="text-center space-y-3">
+                  	<div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${
+                    		isPaused 
+                      		? 'bg-orange-500/10 border border-orange-500/20 text-orange-400' 
+                      		: 'bg-green-500/10 border border-green-500/20 text-green-400'
+                  	}`}>
+                    	{isPaused ? '⏸️ Minting Paused' : '▶️ Minting Active'}
+                  	</div>
+                  	
+                  	{isPaused && (
+                    	<div className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${
+                      		isWhitelisted 
+                        		? 'bg-green-500/10 border border-green-500/20 text-green-400' 
+                        		: 'bg-red-500/10 border border-red-500/20 text-red-400'
+                    	}`}>
+                      	{isWhitelisted ? '✅ You are whitelisted' : '❌ You are not whitelisted'}
+                    	</div>
+                  	)}
+                	</div>
+
                 	{(remainingSupply > 0) ? (
                   	<>
-                    	{/* Check if user has reached max mint limit */}
-                    	{(maxMintPerAddress > 0 && nftBalance >= maxMintPerAddress) ? (
+                    	{/* Check if user can mint */}
+                    	{!canMint() ? (
                       	<div className="text-center py-8">
                         	<div className="w-16 h-16 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                           		<span className="text-3xl">🚫</span>
                         	</div>
-                        	<p className="text-orange-300 text-lg font-semibold mb-3">Maximum mint limit reached</p>
-                        	<p className="text-gray-400 text-base">
-                          		You have already minted {nftBalance} of {maxMintPerAddress} allowed NFT{maxMintPerAddress > 1 ? 's' : ''}
-                        	</p>
+                        	<p className="text-orange-300 text-lg font-semibold mb-3">{getMintStatusMessage()}</p>
+                        	{maxMintPerAddress > 0 && nftBalance >= maxMintPerAddress && (
+                          		<p className="text-gray-400 text-base">
+                            			You have already minted {nftBalance} of {maxMintPerAddress} allowed NFT{maxMintPerAddress > 1 ? 's' : ''}
+                          		</p>
+                        	)}
                       	</div>
                     	) : (
                       	<>
@@ -499,7 +598,7 @@ export default function Mint() {
                           	className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-lg font-bold py-4 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25"
                           	onClick={() => handleMint()}
                         	>
-                          	🚀 Mint NFT ({mintPrice ? `${mintPrice.toLocaleString()} QUAI` : '0 QUAI'})
+                          	🚀 Mint NFT (FREE)
                         	</button>
                         	{maxMintPerAddress > 0 && (
                           	<div className="text-center p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">

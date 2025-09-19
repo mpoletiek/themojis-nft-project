@@ -22,7 +22,7 @@ export default function OwnerControls({ contractAddress, isOwner, account }: Own
   const [newMaxMintPerAddress, setNewMaxMintPerAddress] = useState(0);
   const [whitelistAddress, setWhitelistAddress] = useState('');
   const [isPaused, setIsPaused] = useState(false);
-  const [isWhitelisted, setIsWhitelisted] = useState(false);
+  // const [isWhitelisted, setIsWhitelisted] = useState(false);
   const { web3Provider } = useContext(StateContext);
 
   // Fetch current pause status on component mount
@@ -536,7 +536,7 @@ export default function OwnerControls({ contractAddress, isOwner, account }: Own
                 placeholder="Enter new base URI"
               />
               <button
-                className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white py-3 rounded-lg font-semibold transition-all duration-300"
+                className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white py-3 rounded-lg font-semibold transition-all duration-300"
                 onClick={() => handleUpdateBaseTokenURI()}
               >
                 Update URI

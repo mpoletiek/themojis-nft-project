@@ -11,6 +11,7 @@ import { StateContext } from '@/app/store';
 import ConnectButton from '@/components/ui/connectButton';
 import { useGetAccounts } from '@/utils/wallet';
 import OwnerControls from '@/components/OwnerControls';
+import Footer from '@/components/ui/footer';
 
 export default function Mint() {
   useGetAccounts();
@@ -283,22 +284,27 @@ export default function Mint() {
 
   return (
 	<>
-  	<div className="min-h-screen bg-gradient-to-br from-black via-red-900 to-black relative overflow-x-hidden">
+  	<div className="min-h-screen bg-gradient-to-br from-indigo-900 via-orange-900 to-pink-900 relative overflow-x-hidden">
     	{/* Enhanced Background Pattern */}
     	<div className="absolute inset-0 opacity-30">
       	<div 
         	className="absolute inset-0 w-full h-full"
         	style={{
-          	backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23dc2626' fill-opacity='0.08'%3E%3Ccircle cx='40' cy='40' r='3'/%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3Ccircle cx='60' cy='60' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          	backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff6b6b' fill-opacity='0.1'%3E%3Ccircle cx='40' cy='40' r='3'/%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3Ccircle cx='60' cy='60' r='1'/%3E%3C/g%3E%3Cg fill='%234ecdc4' fill-opacity='0.08'%3E%3Ccircle cx='60' cy='20' r='2'/%3E%3Ccircle cx='20' cy='60' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           	backgroundRepeat: 'repeat'
         	}}
       	></div>
     	</div>
     	
+    	{/* Gradient overlay for depth - lighter at top for title visibility */}
+    	<div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-white/10"></div>
+    	
     	{/* Floating Elements */}
-    	<div className="absolute top-20 left-10 w-20 h-20 bg-red-500/10 rounded-full blur-xl animate-pulse"></div>
-    	<div className="absolute top-40 right-20 w-32 h-32 bg-red-600/5 rounded-full blur-2xl animate-pulse delay-1000"></div>
-    	<div className="absolute bottom-40 left-1/4 w-24 h-24 bg-red-400/10 rounded-full blur-xl animate-pulse delay-2000"></div>
+    	<div className="absolute top-20 left-10 w-20 h-20 bg-pink-500/20 rounded-full blur-xl animate-pulse"></div>
+    	<div className="absolute top-40 right-20 w-32 h-32 bg-cyan-500/15 rounded-full blur-2xl animate-pulse delay-1000"></div>
+    	<div className="absolute bottom-40 left-1/4 w-24 h-24 bg-yellow-500/20 rounded-full blur-xl animate-pulse delay-2000"></div>
+    	<div className="absolute top-60 right-1/3 w-16 h-16 bg-coral-500/15 rounded-full blur-lg animate-pulse delay-500"></div>
+    	<div className="absolute bottom-20 right-10 w-28 h-28 bg-green-500/10 rounded-full blur-2xl animate-pulse delay-1500"></div>
     	
     	{/* Main Content Container */}
     	<div className="flex flex-col items-center justify-center z-10 min-h-screen">
@@ -306,15 +312,15 @@ export default function Mint() {
       	<div className="flex items-center justify-center pt-12 pb-8">
         	<div className="max-w-6xl mx-auto px-6">
           	<div className="text-center mb-12">
-            	<div className="inline-flex items-center px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full mb-4 animate-fade-in-up">
-              	<span className="text-red-400 text-xs font-medium">🚀 Live on Quai Network</span>
+            	<div className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-pink-500/20 to-coral-500/20 border border-pink-500/30 rounded-full mb-4 animate-fade-in-up">
+              	<span className="text-pink-400 text-xs font-medium">🚀 Live on Quai Network</span>
             	</div>
             	<h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-fade-in-up">
-              	<span className="gradient-text">QUAI</span>
-              	<span className="text-white"> NFT DAPP</span>
+              	<span className="gradient-text">The Mojis</span>
+              	<span className="text-white"> NFT Collection</span>
             	</h1>
             	<p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-6 animate-fade-in-up">
-              	Mint, trade, and discover unique digital collectibles on the fastest blockchain network
+              	Mint, trade, and discover unique collection of Emojis on the fastest blockchain network
             	</p>
             	
             	{/* Emoji Preview */}
@@ -384,8 +390,8 @@ export default function Mint() {
       	<div className="max-w-6xl mx-auto px-6 mb-12">
         	<div className="glass-card rounded-2xl p-8 animate-fade-in-up">
           	<div className="text-center mb-8">
-            	<div className="inline-flex items-center px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-full mb-4">
-              	<span className="text-red-400 font-semibold text-sm">📊 Collection Stats</span>
+            	<div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 rounded-full mb-4">
+              	<span className="text-cyan-400 font-semibold text-sm">📊 Collection Stats</span>
             	</div>
             	<h2 className="text-3xl font-bold gradient-text mb-3">
               	{nftName || 'Loading...'}
@@ -405,13 +411,13 @@ export default function Mint() {
 
           	{/* Stats Grid */}
           	<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            	<div className="text-center p-4 bg-white/5 rounded-xl border border-white/10 hover:border-red-500/30 transition-all duration-300">
+            	<div className="text-center p-4 bg-white/5 rounded-xl border border-white/10 hover:border-cyan-500/30 transition-all duration-300">
               	<div className="text-2xl font-bold text-white mb-1">
                 	{Number(tokenSupply) > 0 ? Number(tokenSupply).toLocaleString() : '0'}
               	</div>
               	<div className="text-gray-400 font-medium text-sm">Total Supply</div>
             	</div>
-            	<div className="text-center p-4 bg-white/5 rounded-xl border border-white/10 hover:border-red-500/30 transition-all duration-300">
+            	<div className="text-center p-4 bg-white/5 rounded-xl border border-white/10 hover:border-cyan-500/30 transition-all duration-300">
               	<div className="text-2xl font-bold text-white mb-1">
                 	{maxMintPerAddress > 0 ? maxMintPerAddress.toLocaleString() : '0'}
               	</div>
@@ -440,10 +446,10 @@ export default function Mint() {
       	<div className="max-w-6xl mx-auto px-6 mb-12">
         	<div className="glass-card rounded-2xl p-8 animate-fade-in-up">
           	<div className="text-center mb-8">
-            	<div className="inline-flex items-center px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full mb-4">
-              		<span className="text-purple-400 font-semibold text-sm">🎨 Collection Preview</span>
+            	<div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-500/20 to-pink-500/20 border border-emerald-500/30 rounded-full mb-4">
+              		<span className="text-emerald-400 font-semibold text-sm">🎨 Collection Preview</span>
             	</div>
-            	<h2 className="text-3xl font-bold gradient-text mb-3">What You'll Mint</h2>
+            	<h2 className="text-3xl font-bold gradient-text mb-3">What You&apos;ll Mint</h2>
             	<p className="text-lg text-gray-300">Discover the amazing emoji collection available for minting</p>
           	</div>
           	
@@ -474,7 +480,7 @@ export default function Mint() {
           	{/* User Portfolio Card */}
           	<div className="glass-card rounded-2xl p-6 animate-fade-in-up">
             	<div className="text-center mb-6">
-              	<div className="inline-flex items-center px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full mb-4">
+              	<div className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-full mb-4">
                 	<span className="text-blue-400 font-semibold text-sm">👤 Your Portfolio</span>
               	</div>
               	<h3 className="text-2xl font-bold text-white mb-3">Personal Stats</h3>
@@ -483,13 +489,13 @@ export default function Mint() {
             	{account ? (
               	<div className="space-y-6">
                 	<div className="grid grid-cols-2 gap-4">
-                  	<div className="text-center p-4 bg-gradient-to-br from-red-500/10 to-red-600/5 rounded-xl border border-red-500/20">
+                  	<div className="text-center p-4 bg-gradient-to-br from-pink-500/20 to-coral-500/10 rounded-xl border border-pink-500/30">
                     	<div className="text-2xl font-bold text-white mb-1">
                       		{remainingSupply > 0 ? remainingSupply.toLocaleString() : '0'}
                     	</div>
                     	<div className="text-gray-400 font-medium text-sm">Available to Mint</div>
                   	</div>
-                  	<div className="text-center p-4 bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-xl border border-green-500/20">
+                  	<div className="text-center p-4 bg-gradient-to-br from-green-500/20 to-emerald-500/10 rounded-xl border border-green-500/30">
                     	<div className="text-2xl font-bold text-white mb-1">
                       		{nftBalance > 0 ? nftBalance.toLocaleString() : '0'}
                     	</div>
@@ -545,8 +551,8 @@ export default function Mint() {
           	{/* Minting Card */}
           	<div className="glass-card rounded-2xl p-6 animate-fade-in-up">
             	<div className="text-center mb-6">
-              	<div className="inline-flex items-center px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full mb-4">
-                	<span className="text-red-400 font-semibold text-sm">🚀 Mint NFT</span>
+              	<div className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-orange-500/20 to-yellow-500/20 border border-orange-500/30 rounded-full mb-4">
+                	<span className="text-orange-400 font-semibold text-sm">🚀 Mint NFT</span>
               	</div>
               	<h3 className="text-2xl font-bold text-white mb-3">Mint Your NFT</h3>
               	<p className="text-gray-400 text-base">Get your unique digital collectible</p>
@@ -595,7 +601,7 @@ export default function Mint() {
                     	) : (
                       	<>
                         	<button
-                          	className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-lg font-bold py-4 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25"
+                          	className="w-full bg-gradient-to-r from-pink-500 to-coral-600 hover:from-pink-600 hover:to-coral-700 text-white text-lg font-bold py-4 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-pink-500/25"
                           	onClick={() => handleMint()}
                         	>
                           	🚀 Mint NFT (FREE)
@@ -641,8 +647,8 @@ export default function Mint() {
       	<div className="max-w-6xl mx-auto px-6 mb-12">
         	<div className="glass-card rounded-2xl p-6 animate-fade-in-up">
           	<div className="text-center mb-6">
-            	<div className="inline-flex items-center px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-full mb-4">
-              	<span className="text-purple-400 font-semibold text-sm">🔍 Token Lookup</span>
+            	<div className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-indigo-500/20 to-coral-500/20 border border-indigo-500/30 rounded-full mb-4">
+              	<span className="text-indigo-400 font-semibold text-sm">🔍 Token Lookup</span>
             	</div>
             	<h3 className="text-2xl font-bold text-white mb-3">Explore Token Metadata</h3>
             	<p className="text-gray-400 text-base">Look up specific token URIs and metadata</p>
@@ -660,7 +666,7 @@ export default function Mint() {
                   	value={tokenIdInput}
                 	/>
                 	<button
-                  	className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                  	className="bg-gradient-to-r from-indigo-500 to-coral-600 hover:from-indigo-600 hover:to-coral-700 text-white px-6 py-3 rounded-lg font-semibold whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
                   	onClick={() => handleFetchTokenURI()}
                   	disabled={!tokenIdInput.trim()}
                 	>
@@ -670,7 +676,7 @@ export default function Mint() {
             	</div>
 
             	{retrievedTokenURI && (
-              	<div className="mt-6 p-4 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl border border-purple-500/20">
+              	<div className="mt-6 p-4 bg-gradient-to-br from-indigo-500/20 to-coral-500/20 rounded-xl border border-indigo-500/30">
                 	<p className="text-xs text-gray-400 mb-3 font-medium">Token URI for ID: {tokenIdInput}</p>
                 	<div className="p-3 bg-black/30 rounded-lg border border-white/10">
                   	<a
@@ -710,6 +716,7 @@ export default function Mint() {
       	</div>
     	</div>
   	</div>
+		<Footer />
   	<Toaster/>
 	</>
   )

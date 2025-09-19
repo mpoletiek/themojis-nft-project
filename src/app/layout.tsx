@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Quai NFT Dapp",
-  description: "Quai NFT Dapp",
+  title: "The Mojis",
+  description: "The Mojis NFT Project",
 };
 
 export default function RootLayout({

@@ -413,7 +413,7 @@ export default function Mint() {
           	<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             	<div className="text-center p-4 bg-white/5 rounded-xl border border-white/10 hover:border-cyan-500/30 transition-all duration-300">
               	<div className="text-2xl font-bold text-white mb-1">
-                	{Number(tokenSupply) > 0 ? Number(tokenSupply).toLocaleString() : '0'}
+                	{Number(tokenSupply) > 0 ? Number(tokenSupply).toLocaleString() + 1 : '0'}
               	</div>
               	<div className="text-gray-400 font-medium text-sm">Total Supply</div>
             	</div>

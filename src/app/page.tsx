@@ -239,7 +239,7 @@ export default function Mint() {
 
 
   useEffect(()=>{
-	if(account){
+	if(account && web3Provider){
   	callContract('owner');
   	callContract('tokenid');
   	callContract('supply');
@@ -259,7 +259,7 @@ export default function Mint() {
   	}
   	console.log("Remaining Supply: "+remainingSupply);
 	}
-  }, [account, tokenId, tokenSupply, callContract, remainingSupply]);
+  }, [account, web3Provider, tokenId, tokenSupply, callContract, remainingSupply]);
 
   // Check if user can mint based on pause and whitelist status
   const canMint = () => {
@@ -402,18 +402,22 @@ export default function Mint() {
               	<span className="text-cyan-400 font-semibold text-sm">📊 Collection Stats</span>
             	</div>
             	<h2 className="text-3xl font-bold gradient-text mb-3">
-              	{nftName || 'Loading...'}
+              	{account ? (nftName || 'Loading...') : 'Connect Wallet to View Collection'}
             	</h2>
             	<p className="text-lg text-gray-300">
-              	<span className="text-gray-400">Symbol:</span>{' '}
-              	<a 
-                	href={`${blockExplorerUrl}/token/${contractAddress}`} 
-                	target="_blank" 
-                	rel="noopener noreferrer"
-                	className="text-blue-400 hover:text-blue-300 transition-colors font-semibold"
-              	>
-                	{symbol || 'Loading...'}
-              	</a>
+              	<span className="text-gray-400"></span>{' '}
+              	{account ? (
+                	<a 
+                  		href={`${blockExplorerUrl}/token/${contractAddress}`} 
+                  		target="_blank" 
+                  		rel="noopener noreferrer"
+                  		className="text-blue-400 hover:text-blue-300 transition-colors font-semibold"
+                	>
+                  		{symbol || 'Loading...'}
+                	</a>
+              	) : (
+                	<span className="text-gray-500">Connect wallet to view</span>
+              	)}
             	</p>
           	</div>
 
@@ -421,20 +425,20 @@ export default function Mint() {
           	<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             	<div className="text-center p-4 bg-white/5 rounded-xl border border-white/10 hover:border-cyan-500/30 transition-all duration-300">
               	<div className="text-2xl font-bold text-white mb-1">
-                	{Number(tokenSupply) > 0 ? Number(tokenSupply).toLocaleString() : '0'}
+                	{account ? (Number(tokenSupply) > 0 ? Number(tokenSupply).toLocaleString() : '0') : '--'}
               	</div>
               	<div className="text-gray-400 font-medium text-sm">Total Supply</div>
             	</div>
             	<div className="text-center p-4 bg-white/5 rounded-xl border border-white/10 hover:border-cyan-500/30 transition-all duration-300">
               	<div className="text-2xl font-bold text-white mb-1">
-                	{maxMintPerAddress > 0 ? maxMintPerAddress.toLocaleString() : '0'}
+                	{account ? (maxMintPerAddress > 0 ? maxMintPerAddress.toLocaleString() : '0') : '--'}
               	</div>
               	<div className="text-gray-400 font-medium text-sm">Max Per Address</div>
             	</div>
           	</div>
 
           	{/* Base URI Display */}
-          	{baseTokenURI && (
+          	{account && baseTokenURI && (
             	<div className="p-4 bg-black/20 rounded-xl border border-white/10">
               	<div className="text-xs text-gray-400 mb-2 font-medium">Base Token URI</div>
               	<a 
@@ -445,6 +449,19 @@ export default function Mint() {
               	>
                 	{baseTokenURI}
               	</a>
+            	</div>
+          	)}
+
+          	{/* Connect Wallet Message */}
+          	{!account && (
+            	<div className="text-center py-8">
+              	<div className="mb-6">
+                	<div className="w-16 h-16 bg-gray-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  		<span className="text-3xl">🔗</span>
+                	</div>
+                	<p className="text-gray-400 text-lg mb-6">Connect your wallet to view collection details</p>
+              	</div>
+              	<ConnectButton />
             	</div>
           	)}
         	</div>

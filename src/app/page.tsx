@@ -255,7 +255,7 @@ export default function Mint() {
   	if(tokenId == 0){
     	setRemainingSupply(Number(tokenSupply));
   	} else {
-    	setRemainingSupply((Number(tokenSupply) - (Number(tokenId) - 1)));
+    	setRemainingSupply((Number(tokenSupply) - (Number(tokenId))));
   	}
   	console.log("Remaining Supply: "+remainingSupply);
 	}

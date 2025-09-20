@@ -3,6 +3,7 @@
 'use client'
 import {useState,useEffect,useCallback} from 'react'
 import { useContext } from 'react';
+import Image from 'next/image';
 import { Toaster, toaster } from "@/components/ui/toaster"
 import { buildTransactionUrl, shortenAddress, sortedQuaiShardNames } from '@/utils/quaisUtils';
 import { quais } from 'quais';
@@ -12,6 +13,7 @@ import ConnectButton from '@/components/ui/connectButton';
 import { useGetAccounts } from '@/utils/wallet';
 import OwnerControls from '@/components/OwnerControls';
 import Footer from '@/components/ui/footer';
+import { BLOCKEXPLORER_URL, DEPLOYED_CONTRACT } from '@/utils/constants';
 
 export default function Mint() {
   useGetAccounts();
@@ -24,11 +26,12 @@ export default function Mint() {
   const [retrievedTokenURI, setRetrievedTokenURI] = useState('');
   const [maxMintPerAddress, setMaxMintPerAddress] = useState(0);
   const [nftBalance, setNFTBalance] = useState(0);
-  const [tokenSupply, setTokenSupply] = useState(null);
+  const [tokenSupply, setTokenSupply] = useState(Number(null));
   const [remainingSupply, setRemainingSupply] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isWhitelisted, setIsWhitelisted] = useState(false);
   const { web3Provider, account } = useContext(StateContext);
+  const blockExplorerUrl = BLOCKEXPLORER_URL;
 
   // Emoji list for display
   const emojis = [
@@ -41,7 +44,7 @@ export default function Mint() {
     '1F47A.png', '1F47B.png', '1F47D.png', '1F383.png', '1F386.png', '1F3A8.png', '1F404.png',
     '1F431.png', '1F436.png', '1F469-200D-1F9BD.png', '1F9CE-200D-27A1-FE0F.png', '2648.png'
   ];
-  const contractAddress = process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT as string; // Change this to your contract address
+  const contractAddress = DEPLOYED_CONTRACT; // Change this to your contract address
 
 
   const callContract = useCallback(async (type: string) => {
@@ -89,9 +92,10 @@ export default function Mint() {
 	else if(type == 'supply'){
   	const ERC721contract = new quais.Contract(contractAddress, TheMojis.abi, await web3Provider.getSigner());
   	const supply = await ERC721contract.supply();
+		const numSupply = Number(supply) + 1;
   	if(supply){
     	console.log("supply: "+supply);
-    	setTokenSupply(supply);
+    	setTokenSupply(numSupply);
   	}
   	return supply;
 	}
@@ -249,9 +253,9 @@ export default function Mint() {
 	}
 	if((Number(tokenId) >= 0) && (Number(tokenSupply) >= 0)){
   	if(tokenId == 0){
-    	setRemainingSupply(Number(tokenSupply)+1);
+    	setRemainingSupply(Number(tokenSupply));
   	} else {
-    	setRemainingSupply((Number(tokenSupply) - Number(tokenId)) + 1);
+    	setRemainingSupply((Number(tokenSupply) - (Number(tokenId) - 1)));
   	}
   	console.log("Remaining Supply: "+remainingSupply);
 	}
@@ -325,11 +329,11 @@ export default function Mint() {
             	
             	{/* Emoji Preview */}
             	<div className="flex justify-center items-center space-x-4 mb-6 animate-fade-in-up">
-              	<img src="/mojis/1F603.png" alt="Happy" className="w-12 h-12 object-contain hover:scale-110 transition-transform duration-300" />
-              	<img src="/mojis/1F60D.png" alt="Heart Eyes" className="w-12 h-12 object-contain hover:scale-110 transition-transform duration-300" />
-              	<img src="/mojis/1F680.png" alt="Rocket" className="w-12 h-12 object-contain hover:scale-110 transition-transform duration-300" />
-              	<img src="/mojis/1F47A.png" alt="Alien" className="w-12 h-12 object-contain hover:scale-110 transition-transform duration-300" />
-              	<img src="/mojis/1F383.png" alt="Halloween" className="w-12 h-12 object-contain hover:scale-110 transition-transform duration-300" />
+              	<Image src="/mojis/1F603.png" alt="Happy" width={48} height={48} className="hover:scale-110 transition-transform duration-300" />
+              	<Image src="/mojis/1F60D.png" alt="Heart Eyes" width={48} height={48} className="hover:scale-110 transition-transform duration-300" />
+              	<Image src="/mojis/1F680.png" alt="Rocket" width={48} height={48} className="hover:scale-110 transition-transform duration-300" />
+              	<Image src="/mojis/1F47A.png" alt="Alien" width={48} height={48} className="hover:scale-110 transition-transform duration-300" />
+              	<Image src="/mojis/1F383.png" alt="Halloween" width={48} height={48} className="hover:scale-110 transition-transform duration-300" />
             	</div>
             	
             	{/* Connection Status */}
@@ -366,20 +370,24 @@ export default function Mint() {
           	{/* First set of emojis */}
           	{emojis.map((emoji, index) => (
             	<div key={`first-${index}`} className="flex-shrink-0 mx-2">
-              		<img 
+              		<Image 
                 		src={`/mojis/${emoji}`} 
                 		alt={`Emoji ${index + 1}`}
-                		className="w-16 h-16 object-contain hover:scale-110 transition-transform duration-300"
+                		width={64}
+                		height={64}
+                		className="hover:scale-110 transition-transform duration-300"
               		/>
             	</div>
           	))}
           	{/* Duplicate set for seamless loop */}
           	{emojis.map((emoji, index) => (
             	<div key={`second-${index}`} className="flex-shrink-0 mx-2">
-              		<img 
+              		<Image 
                 		src={`/mojis/${emoji}`} 
                 		alt={`Emoji ${index + 1}`}
-                		className="w-16 h-16 object-contain hover:scale-110 transition-transform duration-300"
+                		width={64}
+                		height={64}
+                		className="hover:scale-110 transition-transform duration-300"
               		/>
             	</div>
           	))}
@@ -399,7 +407,7 @@ export default function Mint() {
             	<p className="text-lg text-gray-300">
               	<span className="text-gray-400">Symbol:</span>{' '}
               	<a 
-                	href={`https://quaiscan.io/token/${contractAddress}`} 
+                	href={`${blockExplorerUrl}/token/${contractAddress}`} 
                 	target="_blank" 
                 	rel="noopener noreferrer"
                 	className="text-blue-400 hover:text-blue-300 transition-colors font-semibold"
@@ -413,7 +421,7 @@ export default function Mint() {
           	<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             	<div className="text-center p-4 bg-white/5 rounded-xl border border-white/10 hover:border-cyan-500/30 transition-all duration-300">
               	<div className="text-2xl font-bold text-white mb-1">
-                	{Number(tokenSupply) > 0 ? Number(tokenSupply).toLocaleString() + 1 : '0'}
+                	{Number(tokenSupply) > 0 ? Number(tokenSupply).toLocaleString() : '0'}
               	</div>
               	<div className="text-gray-400 font-medium text-sm">Total Supply</div>
             	</div>
@@ -457,10 +465,12 @@ export default function Mint() {
           	<div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-4">
             	{emojis.slice(0, 24).map((emoji, index) => (
               		<div key={index} className="group relative">
-                		<img 
+                		<Image 
                   			src={`/mojis/${emoji}`} 
                   			alt={`Emoji ${index + 1}`}
-                  			className="w-full h-16 object-contain group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                  			width={64}
+                  			height={64}
+                  			className="w-full h-16 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
                 		/>
                 		<div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
                   			<span className="text-white text-xs font-semibold"></span>

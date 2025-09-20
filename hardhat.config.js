@@ -12,7 +12,7 @@ module.exports = {
   defaultNetwork: 'cyprus1',
   networks: {
     cyprus1: {
-      url: process.env.RPC_URL,
+      url: process.env.NEXT_PUBLIC_RPC_URL,
       accounts: [process.env.CYPRUS1_PK],
       chainId: Number(process.env.CHAIN_ID),
     },

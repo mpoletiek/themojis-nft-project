@@ -4,7 +4,7 @@ const { deployMetadata } = require("hardhat")
 require('dotenv').config()
 
 // Pull contract arguments from .env
-const tokenArgs = [process.env.INITIAL_OWNER]
+const tokenArgs = [process.env.NEXT_PUBLIC_INITIAL_OWNER]
 
 async function deployERC721() {
 

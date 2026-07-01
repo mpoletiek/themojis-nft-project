@@ -3,3 +3,5 @@ export const BLOCKEXPLORER_URL = process.env.NEXT_PUBLIC_BLOCKEXPLORER_URL as st
 export const CHAIN_ID = process.env.CHAIN_ID as string;
 export const INITIAL_OWNER = process.env.INITIAL_OWNER as string;
 export const DEPLOYED_CONTRACT = process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT as string;
+// Public IPFS gateway used to resolve ipfs:// metadata and image URIs for display.
+export const IPFS_GATEWAY = (process.env.NEXT_PUBLIC_IPFS_GATEWAY as string) || 'https://ipfs.io/ipfs/';

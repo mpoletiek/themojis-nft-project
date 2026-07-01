@@ -29,17 +29,40 @@ const useGetAccounts = () => {
   	return account;
 	};
 
-	if (!window.pelagus) {
-  	dispatch({ type: 'SET_WEB3_PROVIDER', payload: undefined });
-  	return;
-	} else {
-  	const web3provider = new quais.BrowserProvider(window.pelagus);
+	// Initialize the provider once the Pelagus extension has injected itself.
+	const init = () => {
+  	const pelagus = window.pelagus;
+  	if (!pelagus) return;
+  	const web3provider = new quais.BrowserProvider(pelagus);
   	dispatch({ type: 'SET_WEB3_PROVIDER', payload: web3provider });
   	getAccounts(web3provider);
-  	window.pelagus.on('accountsChanged', (accounts: Array<string> | undefined) =>
+  	pelagus.on('accountsChanged', (accounts: Array<string> | undefined) =>
     	dispatchAccount(accounts, dispatch)
   	);
+	};
+
+	// The extension injects window.pelagus asynchronously, so on a cold first
+	// load it may not be present yet when this effect runs. Poll briefly for it
+	// instead of checking only once (which caused a false "Install Pelagus").
+	if (window.pelagus) {
+  	init();
+  	return;
 	}
+
+	dispatch({ type: 'SET_WEB3_PROVIDER', payload: undefined });
+	let attempts = 0;
+	const maxAttempts = 20; // ~3s at 150ms intervals
+	const interval = setInterval(() => {
+  	attempts += 1;
+  	if (window.pelagus) {
+    	clearInterval(interval);
+    	init();
+  	} else if (attempts >= maxAttempts) {
+    	clearInterval(interval);
+  	}
+	}, 150);
+
+	return () => clearInterval(interval);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 };

@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 import { quais } from 'quais';
-import { RPC_URL, BLOCKEXPLORER_URL } from '@/utils/constants';
+import { RPC_URL, BLOCKEXPLORER_URL, IPFS_GATEWAY } from '@/utils/constants';
 
 // ---- formatting ---- //
 export const shortenAddress = (address: string): string => {
@@ -28,6 +28,17 @@ export const buildAddressUrl = (address: string): string => {
 
 export const buildTransactionUrl = (txHash: string): string => {
   return `${BLOCKEXPLORER_URL}/tx/${txHash}`;
+};
+
+// ---- ipfs ---- //
+// Resolve an ipfs:// URI (or bare CID/path) to an HTTP URL via the configured gateway.
+export const ipfsToHttp = (uri: string): string => {
+  if (!uri) return '';
+  if (uri.startsWith('http://') || uri.startsWith('https://')) return uri;
+  const gateway = IPFS_GATEWAY.endsWith('/') ? IPFS_GATEWAY : `${IPFS_GATEWAY}/`;
+  let path = uri.replace(/^ipfs:\/\//, '');
+  path = path.replace(/^ipfs\//, ''); // handle ipfs://ipfs/<cid> form
+  return `${gateway}${path}`;
 };
 
 // ---- dispatchers ---- //
